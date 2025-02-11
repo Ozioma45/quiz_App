@@ -38,7 +38,10 @@ button:hover,
   color: white;
 }
 
-button:focus {
+/* button:focus {
+} */
+
+.selected {
   background-color: orange;
   color: white;
 }

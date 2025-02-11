@@ -68,6 +68,7 @@ const quizData = [
 
 let currentQuestionIndex = 0;
 let score = 0;
+let selectedAnswers = {};
 
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
@@ -75,6 +76,8 @@ const nextButton = document.getElementById("next-btn");
 const prevButton = document.getElementById("prev-btn");
 const progressElement = document.getElementById("progress");
 const progressBar = document.getElementById("progress-bar");
+const resultContainer = document.getElementById("result");
+const scoreElement = document.getElementById("score");
 
 function updateProgressBar() {
   let progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
@@ -89,27 +92,60 @@ function loadQuestion() {
     quizData.length
   }`;
 
+  nextButton.disabled = true;
+
   currentQuestion.options.forEach((option) => {
     const button = document.createElement("button");
     button.textContent = option;
     button.classList.add("btn");
     answerButtons.appendChild(button);
+    button.addEventListener("click", () => selectAnswer(button, option));
 
-    // Disable Previous button if at the first question
-    prevButton.style.display = currentQuestionIndex === 0 ? "none" : "block";
-
-    // Disable Next button if at the last question
-    nextButton.style.display =
-      currentQuestionIndex === quizData.length - 1 ? "none" : "block";
+    // Highlight previously selected answer if user navigates back
+    if (selectedAnswers[currentQuestionIndex] === option) {
+      button.classList.add("selected");
+      nextButton.disabled = false;
+    }
   });
+
+  // Disable Previous button if at the first question
+  prevButton.style.display = currentQuestionIndex === 0 ? "none" : "block";
+
+  // Disable Next button if at the last question
+  nextButton.innerText =
+    currentQuestionIndex === quizData.length - 1 ? "Show Result" : "Next";
 
   updateProgressBar();
 }
 
+function selectAnswer(button, option) {
+  // Store selected answer
+  selectedAnswers[currentQuestionIndex] = option;
+
+  // Remove previous selection highlight
+  Array.from(answerButtons.children).forEach((btn) =>
+    btn.classList.remove("selected")
+  );
+
+  // Highlight the selected answer
+  button.classList.add("selected");
+
+  // Enable Next button when an option is selected
+  nextButton.disabled = false;
+}
+
 nextButton.addEventListener("click", () => {
+  const selected = selectedAnswers[currentQuestionIndex];
+  const correct = quizData[currentQuestionIndex].answer;
+
+  if (selected === correct) {
+    score++;
+  }
   currentQuestionIndex++;
   if (currentQuestionIndex < quizData.length) {
     loadQuestion();
+  } else {
+    showResults();
   }
 });
 
@@ -119,6 +155,12 @@ prevButton.addEventListener("click", () => {
     loadQuestion();
   }
 });
+
+function showResults() {
+  document.getElementById("quiz").classList.add("hidden");
+  resultContainer.classList.remove("hidden");
+  scoreElement.textContent = `${score} / ${quizData.length}`;
+}
 
 function resetState() {
   answerButtons.innerHTML = "";
