@@ -78,6 +78,7 @@ const progressElement = document.getElementById("progress");
 const progressBar = document.getElementById("progress-bar");
 const resultContainer = document.getElementById("result");
 const scoreElement = document.getElementById("score");
+const textConfirm = document.getElementById("textConfirm");
 
 function updateProgressBar() {
   let progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
@@ -92,7 +93,7 @@ function loadQuestion() {
     quizData.length
   }`;
 
-  nextButton.disabled = true;
+  textConfirm.textContent = "";
 
   currentQuestion.options.forEach((option) => {
     const button = document.createElement("button");
@@ -138,9 +139,18 @@ nextButton.addEventListener("click", () => {
   const selected = selectedAnswers[currentQuestionIndex];
   const correct = quizData[currentQuestionIndex].answer;
 
-  if (selected === correct) {
+  if (selectedAnswers[currentQuestionIndex] == null) {
+    textConfirm.innerText = "Please select an answer before proceeding.";
+    return;
+  }
+
+  if (
+    selected === correct &&
+    !selectedAnswers.hasOwnProperty(currentQuestionIndex + 1)
+  ) {
     score++;
   }
+
   currentQuestionIndex++;
   if (currentQuestionIndex < quizData.length) {
     loadQuestion();
@@ -153,6 +163,7 @@ prevButton.addEventListener("click", () => {
   if (currentQuestionIndex > 0) {
     currentQuestionIndex--;
     loadQuestion();
+    updateProgressBar();
   }
 });
 
