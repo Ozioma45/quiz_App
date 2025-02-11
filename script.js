@@ -156,7 +156,7 @@ nextButton.addEventListener("click", () => {
   if (currentQuestionIndex < quizData.length) {
     loadQuestion();
   } else {
-    showResults();
+    confirmResults();
   }
 });
 
@@ -167,6 +167,16 @@ prevButton.addEventListener("click", () => {
     updateProgressBar();
   }
 });
+
+function confirmResults() {
+  let confirmation = confirm("Are you sure you want to submit your answers?");
+  if (confirmation) {
+    showResults();
+  } else {
+    currentQuestionIndex--; // Stay on the last question
+    loadQuestion();
+  }
+}
 
 function showResults() {
   document.getElementById("quiz").classList.add("hidden");
