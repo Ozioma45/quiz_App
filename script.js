@@ -94,6 +94,7 @@ function loadQuestion() {
   }`;
 
   textConfirm.textContent = "";
+  nextButton.disabled = true;
 
   currentQuestion.options.forEach((option) => {
     const button = document.createElement("button");
@@ -175,6 +176,15 @@ function showResults() {
 
 function resetState() {
   answerButtons.innerHTML = "";
+}
+
+function restartQuiz() {
+  currentQuestionIndex = 0;
+  score = 0;
+  selectedAnswers = {};
+  document.getElementById("quiz").classList.remove("hidden");
+  resultContainer.classList.add("hidden");
+  loadQuestion();
 }
 
 loadQuestion();
